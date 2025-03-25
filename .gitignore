@@ -85,5 +85,8 @@ ProjectSettings/
 # UTMP files used for building the game in mobile platform
 .utmp/
 
+# TextMesh Pro
+Assets/TextMesh Pro/
+
 # LevelPlay
 Assets/LevelPlay/
