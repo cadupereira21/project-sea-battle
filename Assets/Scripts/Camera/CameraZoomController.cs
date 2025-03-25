@@ -23,6 +23,8 @@ namespace Camera {
         }
 
         private void CheckInput() {
+            if (Input.touchCount != 2) return;
+            
             Touch touch0 = Input.GetTouch(0);
             Touch touch1 = Input.GetTouch(1);
         
