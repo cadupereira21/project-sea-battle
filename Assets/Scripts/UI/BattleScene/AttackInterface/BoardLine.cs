@@ -8,20 +8,20 @@ namespace UI.BattleScene.AttackInterface {
         [SerializeField]
         private GameObject[] coordinates = new GameObject[10];
 
-        private string _lineLetter;
+        private int _lineIndex;
 
         private void Start() {
             for (int i = 0; i < coordinates.Length; i++) {
                 Button tileButton = coordinates[i].GetComponent<Button>();
                 int coordinateNumber = i + 1;
                 tileButton.onClick.AddListener(() => {
-                    AttackInterfaceController.Instance.SetSelectedCoordinate(string.Concat(_lineLetter, coordinateNumber));
+                    AttackInterfaceController.Instance.SetSelectedCoordinate(new Tuple<int, int>(_lineIndex, coordinateNumber));
                 });
             }
         }
 
-        public void SetLineLetter(string lineLetter) {
-            _lineLetter = lineLetter;
+        public void SetLineLetter(int lineLetter) {
+            _lineIndex = lineLetter;
         }
 
     }

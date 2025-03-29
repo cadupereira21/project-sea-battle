@@ -4002,6 +4002,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1428574147}
+  - component: {fileID: 1428574148}
   m_Layer: 0
   m_Name: Arrows
   m_TagString: Untagged
@@ -4033,6 +4034,23 @@ RectTransform:
   m_AnchoredPosition: {x: 570, y: -241}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1428574148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1428574146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2b270dc7ace4e4e9475b72529f3661a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  upArrow: {fileID: 825642608}
+  downArrow: {fileID: 1495988848}
+  leftArrow: {fileID: 882619651}
+  rightArrow: {fileID: 1216915964}
+  confirmButton: {fileID: 1014814435}
 --- !u!1 &1479497126
 GameObject:
   m_ObjectHideFlags: 0
