@@ -14,12 +14,11 @@ namespace Battle {
             } else {
                 Destroy(this.gameObject);
             }
-            
-            _battleController = BattleController.Instance;
         }
 
         private void Start() {
-            _battleController.playerTurn.AddListener(StartPlayerTurn);
+            _battleController = BattleController.Instance;
+            _battleController.PlayerTurn.AddListener(StartPlayerTurn);
         }
 
         private void StartPlayerTurn() {

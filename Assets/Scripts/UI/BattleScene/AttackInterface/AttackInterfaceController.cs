@@ -22,7 +22,7 @@ namespace UI.BattleScene.AttackInterface {
                 Destroy(this);  
             }
             
-            SelectedCoordinate = new Tuple<int, int>(0, 1);
+            SelectedCoordinate = new Tuple<int, int>(0, 0);
             selectedCoordinateText.text = GetStringCoordinates();
         }
         
@@ -33,12 +33,12 @@ namespace UI.BattleScene.AttackInterface {
         }
 
         public void ConfirmAttack() {
-            
+            PlayerController.Instance.Attack(SelectedCoordinate.Item1, SelectedCoordinate.Item2);
         }
 
         private string GetStringCoordinates() {
             string lineLetter = LineLetters[SelectedCoordinate.Item1];
-            string coordinateNumber = SelectedCoordinate.Item2.ToString();
+            int coordinateNumber = SelectedCoordinate.Item2 + 1;
             
             return string.Concat(lineLetter, coordinateNumber);
         }

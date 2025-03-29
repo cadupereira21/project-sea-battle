@@ -13,9 +13,9 @@ namespace UI.BattleScene.AttackInterface {
         private void Start() {
             for (int i = 0; i < coordinates.Length; i++) {
                 Button tileButton = coordinates[i].GetComponent<Button>();
-                int coordinateNumber = i + 1;
+                int column = i;
                 tileButton.onClick.AddListener(() => {
-                    AttackInterfaceController.Instance.SetSelectedCoordinate(new Tuple<int, int>(_lineIndex, coordinateNumber));
+                    AttackInterfaceController.Instance.SetSelectedCoordinate(new Tuple<int, int>(_lineIndex, column));
                 });
             }
         }

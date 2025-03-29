@@ -8,8 +8,6 @@ namespace Battle {
         
         public static EnemyController Instance { get; private set; }
 
-        private bool _canAttack = false;
-
         private BattleController _battleController;
 
         private void Awake() {
@@ -18,25 +16,22 @@ namespace Battle {
             } else {
                 Destroy(this.gameObject);
             }
-            
-            _battleController = BattleController.Instance;
         }
         
         private void Start() {
-            _battleController.enemyTurn.AddListener(StartEnemyTurn);
+            _battleController = BattleController.Instance;
+            _battleController.EnemyTurn.AddListener(StartEnemyTurn);
         }
 
         private void StartEnemyTurn() {
             Debug.Log("[EnemyController] Enemy turn started!");
 
-            if (_canAttack == false) {
-                this.StartCoroutine(Wait());
-            }
+            this.StartCoroutine(WaitAndAttack());
         }
 
-        private IEnumerator Wait() {
+        private IEnumerator WaitAndAttack() {
             yield return new WaitForSeconds(5);
-            _canAttack = true;
+            Attack();
         }
 
         private void Attack() {
@@ -44,7 +39,6 @@ namespace Battle {
             int y = Random.Range(0, 10);
             
             _battleController.EnemyAttack(x, y);
-            _canAttack = false;
         }
     }
 }

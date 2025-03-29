@@ -8,9 +8,11 @@ namespace Battle {
         
         public static BattleController Instance { get; private set; }
 
-        public UnityEvent enemyTurn = new UnityEvent();
+        [NonSerialized]
+        public readonly UnityEvent EnemyTurn = new UnityEvent();
 
-        public UnityEvent playerTurn = new UnityEvent();
+        [NonSerialized]
+        public readonly UnityEvent PlayerTurn = new UnityEvent();
         
         private readonly BoardsController _boardsController = BoardsController.Instance;
         
@@ -22,14 +24,18 @@ namespace Battle {
             } else {
                 Destroy(this.gameObject);
             }
+            
+            _boardsController.InitEnemyBoard();
         }
 
         public void PlayerAttack(int x, int y) {
+            Debug.Log($"[BattleController] Player attack: ({x}, {y})");
             _boardsController.AttackEnemy(x, y);
             ChangeTurn();
         }
 
         public void EnemyAttack(int x, int y) {
+            Debug.Log($"[BattleController] Enemy attack: ({x}, {y})");
             _boardsController.AttackPlayer(x, y);
             ChangeTurn();
         }
@@ -42,10 +48,10 @@ namespace Battle {
         private void InvokeEventByCurrentTurn() {
             switch (_currentTurn) {
                 case BattleTurn.PLAYER:
-                    playerTurn.Invoke();
+                    PlayerTurn.Invoke();
                     break;
                 case BattleTurn.ENEMY:
-                    enemyTurn.Invoke();
+                    EnemyTurn.Invoke();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

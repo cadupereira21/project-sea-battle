@@ -31,6 +31,7 @@ namespace UI.BattleScene.AttackInterface {
             downArrow.GetComponent<Button>().onClick.AddListener(DownArrowClick);
             leftArrow.GetComponent<Button>().onClick.AddListener(LeftArrowClick);
             rightArrow.GetComponent<Button>().onClick.AddListener(RightArrowClick);
+            confirmButton.GetComponent<Button>().onClick.AddListener(ConfirmButtonClick);
         }
 
         private static void UpArrowClick() {
@@ -60,7 +61,7 @@ namespace UI.BattleScene.AttackInterface {
         private static void LeftArrowClick() {
             Tuple<int, int> selectedCoordinate = AttackInterfaceController.Instance.SelectedCoordinate;
             
-            if (selectedCoordinate.Item2 == 1) {
+            if (selectedCoordinate.Item2 == 0) {
                 return;
             }
             
@@ -72,13 +73,17 @@ namespace UI.BattleScene.AttackInterface {
         private static void RightArrowClick() {
             Tuple<int, int> selectedCoordinate = AttackInterfaceController.Instance.SelectedCoordinate;
             
-            if (selectedCoordinate.Item2 == 10) {
+            if (selectedCoordinate.Item2 == 9) {
                 return;
             }
             
             int newCoordinateValue = selectedCoordinate.Item2 + 1;
             
             AttackInterfaceController.Instance.SetSelectedCoordinate(new Tuple<int, int>(selectedCoordinate.Item1, newCoordinateValue));
+        }
+        
+        private static void ConfirmButtonClick() {
+            AttackInterfaceController.Instance.ConfirmAttack();
         }
     }
 }

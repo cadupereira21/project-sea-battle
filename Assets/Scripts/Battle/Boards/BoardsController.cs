@@ -1,4 +1,6 @@
-﻿namespace Battle.Boards {
+﻿using UnityEngine;
+
+namespace Battle.Boards {
     public class BoardsController {
         
         private static BoardsController _instance;
@@ -17,6 +19,10 @@
         
         public void AttackPlayer(int x, int y) {
             _playerBoard.Attack(x, y);
+        }
+        
+        public void InitEnemyBoard() {
+            _enemyBoard.Init();
         }
     }
 }
