@@ -1,19 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
+using UI.BattleScene.AttackInterface;
+using UnityEngine;
 
 namespace Battle.Boards {
     public class EnemyBoard : BattleBoard {
 
-        private static EnemyBoard _instance;
+        public static EnemyBoard Instance { get; private set; }
 
-        public static EnemyBoard Instance => _instance ??= new EnemyBoard();
-        
-        private EnemyBoard() { }
-        
+        [SerializeField] 
+        private EnemyBoardInterface enemyBoardInterface;
+
+        private void Awake() {
+            if (Instance == null) {
+                Instance = this;
+            } else {
+                Destroy(this.gameObject);
+            }
+        }
+
         public void Init() {
             this.InitWater();
             InitWarships();
             this.PrintBoard();
+        }
+        
+        public new void Attack(int x, int y) {
+            AttackResult attackResult = base.Attack(x, y);
+            switch (attackResult) {
+                case AttackResult.HIT:
+                    enemyBoardInterface.SetInterfaceTile(x, y, TileType.WARSHIP_DESTROYED);
+                    break;
+                case AttackResult.MISS:
+                    enemyBoardInterface.SetInterfaceTile(x, y, TileType.WATER);
+                    break;
+                case AttackResult.ALREADY_DESTROYED:
+                    enemyBoardInterface.SetInterfaceTile(x, y, TileType.WARSHIP_DESTROYED);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
         
         private void InitWarships() {

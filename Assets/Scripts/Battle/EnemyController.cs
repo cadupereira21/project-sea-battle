@@ -20,7 +20,7 @@ namespace Battle {
         
         private void Start() {
             _battleController = BattleController.Instance;
-            _battleController.EnemyTurn.AddListener(StartEnemyTurn);
+            _battleController.OnEnemyTurn.AddListener(StartEnemyTurn);
         }
 
         private void StartEnemyTurn() {

@@ -9,12 +9,12 @@ namespace Battle {
         public static BattleController Instance { get; private set; }
 
         [NonSerialized]
-        public readonly UnityEvent EnemyTurn = new UnityEvent();
+        public readonly UnityEvent OnEnemyTurn = new ();
 
         [NonSerialized]
-        public readonly UnityEvent PlayerTurn = new UnityEvent();
+        public readonly UnityEvent OnPlayerTurn = new ();
         
-        private readonly BoardsController _boardsController = BoardsController.Instance;
+        private BoardsController _boardsController;
         
         private BattleTurn _currentTurn = BattleTurn.PLAYER;
 
@@ -25,6 +25,10 @@ namespace Battle {
                 Destroy(this.gameObject);
             }
             
+        }
+
+        private void Start() {
+            _boardsController = BoardsController.Instance;
             _boardsController.InitEnemyBoard();
         }
 
@@ -48,10 +52,10 @@ namespace Battle {
         private void InvokeEventByCurrentTurn() {
             switch (_currentTurn) {
                 case BattleTurn.PLAYER:
-                    PlayerTurn.Invoke();
+                    OnPlayerTurn.Invoke();
                     break;
                 case BattleTurn.ENEMY:
-                    EnemyTurn.Invoke();
+                    OnEnemyTurn.Invoke();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -18,7 +18,7 @@ namespace Battle {
 
         private void Start() {
             _battleController = BattleController.Instance;
-            _battleController.PlayerTurn.AddListener(StartPlayerTurn);
+            _battleController.OnPlayerTurn.AddListener(StartPlayerTurn);
         }
 
         private void StartPlayerTurn() {

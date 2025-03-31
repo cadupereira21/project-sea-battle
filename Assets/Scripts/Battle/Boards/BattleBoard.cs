@@ -2,24 +2,26 @@
 using UnityEngine;
 
 namespace Battle.Boards {
-    public abstract class BattleBoard {
+    public abstract class BattleBoard : MonoBehaviour {
 
         private readonly TileType[,] _board = new TileType[10, 10];
 
-        public void Attack(int x, int y) {
+        public AttackResult Attack(int x, int y) {
             TileType tileType = _board[x,y];
 
             switch (tileType) {
                 case TileType.WATER:
                     Debug.Log("[BattleBoard] Attack missed!");
-                    break;
+                    return AttackResult.MISS;
                 case TileType.WARSHIP_ALIVE:
                     Debug.Log("[BattleBoard] Warship hit!");
                     SetTile(x, y, TileType.WARSHIP_DESTROYED);
-                    break;
+                    return AttackResult.HIT;
                 case TileType.WARSHIP_DESTROYED:
                     Debug.Log("[BattleBoard] Warship already destroyed!");
-                    break;
+                    return AttackResult.ALREADY_DESTROYED;
+                case TileType.UNKNOWN:
+                    throw new ArgumentOutOfRangeException();
                 default:
                     throw new ArgumentOutOfRangeException();
             }

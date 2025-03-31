@@ -1,10 +1,14 @@
 ﻿namespace Battle.Boards {
     public class PlayerBoard : BattleBoard {
 
-        private static PlayerBoard _instance;
+        public static PlayerBoard Instance { get; private set; }
         
-        public static PlayerBoard Instance => _instance ??= new PlayerBoard();
-        
-        private PlayerBoard() { }
+        private void Awake() {
+            if (Instance == null) {
+                Instance = this;
+            } else {
+                Destroy(this.gameObject);
+            }
+        }
     }
 }

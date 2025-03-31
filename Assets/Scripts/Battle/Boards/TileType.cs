@@ -3,5 +3,6 @@
         WATER,
         WARSHIP_ALIVE,
         WARSHIP_DESTROYED,
+        UNKNOWN
     }
 }

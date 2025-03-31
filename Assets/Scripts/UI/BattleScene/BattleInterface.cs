@@ -1,4 +1,3 @@
-using System;
 using Battle;
 using UnityEngine;
 
@@ -25,8 +24,8 @@ namespace UI.BattleScene {
         private void Start() {
             _battleController = BattleController.Instance;
             
-            _battleController.PlayerTurn.AddListener(ShowActionOverlay);
-            _battleController.EnemyTurn.AddListener(ShowEnemyTurnOverlay);
+            _battleController.OnPlayerTurn.AddListener(ShowActionOverlay);
+            _battleController.OnEnemyTurn.AddListener(ShowEnemyTurnOverlay);
         }
 
         private void OnEnable() {
@@ -50,7 +49,7 @@ namespace UI.BattleScene {
             actionOverlay.SetActive(true); 
         }
         
-        private void ShowEnemyTurnOverlay() {
+        public void ShowEnemyTurnOverlay() {
             actionOverlay.SetActive(false);
             attackInterface.SetActive(false);
             enemyTurnOverlay.SetActive(true);

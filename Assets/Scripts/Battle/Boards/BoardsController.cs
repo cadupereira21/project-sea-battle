@@ -1,17 +1,27 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Battle.Boards {
-    public class BoardsController {
+    public class BoardsController : MonoBehaviour {
         
-        private static BoardsController _instance;
+        public static BoardsController Instance { get; private set; }
         
-        public static BoardsController Instance => _instance ??= new BoardsController();
+        private EnemyBoard _enemyBoard;
         
-        private readonly EnemyBoard _enemyBoard = EnemyBoard.Instance;
-        
-        private readonly PlayerBoard _playerBoard = PlayerBoard.Instance;
-        
-        private BoardsController() { }
+        private PlayerBoard _playerBoard;
+
+        private void Awake() {
+            if (Instance == null) {
+                Instance = this;
+            } else {
+                Destroy(this.gameObject);
+            }
+        }
+
+        private void Start() {
+            _enemyBoard = EnemyBoard.Instance;
+            _playerBoard = PlayerBoard.Instance;
+        }
 
         public void AttackEnemy(int x, int y) {
             _enemyBoard.Attack(x, y);

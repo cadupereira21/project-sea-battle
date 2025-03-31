@@ -1,4 +1,5 @@
 ﻿using System;
+using Battle.Boards;
 using UnityEngine;
 
 namespace UI.BattleScene.AttackInterface {
@@ -12,6 +13,10 @@ namespace UI.BattleScene.AttackInterface {
                 GameObject line = boardLines[index];
                 line.GetComponent<BoardLine>().SetLineLetter(index);
             }
+        }
+
+        public void SetInterfaceTile(int x, int y, TileType tileType) {
+            boardLines[x].GetComponent<BoardLine>().SetButtonColor(y, tileType);
         }
     }
 }
