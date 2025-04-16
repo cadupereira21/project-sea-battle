@@ -29,17 +29,17 @@ namespace Battle {
 
         private void Start() {
             _boardsController = BoardsController.Instance;
-            _boardsController.InitEnemyBoard();
+            _boardsController.InitBoards();
         }
 
         public void PlayerAttack(int x, int y) {
-            Debug.Log($"[BattleController] Player attack: ({x}, {y})");
+            Debug.Log($"[BattleController] Player attack: ({x+1}, {y+1})");
             _boardsController.AttackEnemy(x, y);
             ChangeTurn();
         }
 
         public void EnemyAttack(int x, int y) {
-            Debug.Log($"[BattleController] Enemy attack: ({x}, {y})");
+            Debug.Log($"[BattleController] Enemy attack: ({x+1}, {y+1})");
             _boardsController.AttackPlayer(x, y);
             ChangeTurn();
         }

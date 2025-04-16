@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using UI.BattleScene.AttackInterface;
 using UnityEngine;
 
 namespace Battle.Boards {
     public class EnemyBoard : BattleBoard {
 
         public static EnemyBoard Instance { get; private set; }
-
-        [SerializeField] 
-        private EnemyBoardInterface enemyBoardInterface;
 
         private void Awake() {
             if (Instance == null) {
@@ -23,23 +19,6 @@ namespace Battle.Boards {
             this.InitWater();
             InitWarships();
             this.PrintBoard();
-        }
-        
-        public new void Attack(int x, int y) {
-            AttackResult attackResult = base.Attack(x, y);
-            switch (attackResult) {
-                case AttackResult.HIT:
-                    enemyBoardInterface.SetInterfaceTile(x, y, TileType.WARSHIP_DESTROYED);
-                    break;
-                case AttackResult.MISS:
-                    enemyBoardInterface.SetInterfaceTile(x, y, TileType.WATER);
-                    break;
-                case AttackResult.ALREADY_DESTROYED:
-                    enemyBoardInterface.SetInterfaceTile(x, y, TileType.WARSHIP_DESTROYED);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
         }
         
         private void InitWarships() {
@@ -73,7 +52,7 @@ namespace Battle.Boards {
             };
             
             foreach (Tuple<int, int> coordinate in warshipCoordinates) {
-                this.SetTile(coordinate.Item1, coordinate.Item2, TileType.WARSHIP_ALIVE);
+                this.SetBoardTile(coordinate.Item1, coordinate.Item2, TileType.WARSHIP_ALIVE);
             }
         }
     }

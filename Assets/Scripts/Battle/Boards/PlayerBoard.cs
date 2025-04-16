@@ -10,5 +10,9 @@
                 Destroy(this.gameObject);
             }
         }
+
+        public void Init() {
+            this.InitWater();
+        }
     }
 }

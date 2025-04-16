@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6911843198413446839}
-  - component: {fileID: -5157899706989432324}
+  - component: {fileID: 2579017923932049477}
   m_Layer: 0
-  m_Name: BoardLine
+  m_Name: BoardLineWithButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,7 +46,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &-5157899706989432324
+--- !u!114 &2579017923932049477
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -55,7 +55,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 462518776935197200}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6b6c54f4e3f4d5b912b6ecda47e6603, type: 3}
+  m_Script: {fileID: 11500000, guid: 034a22ddd24f42e2a996fcab85cd4217, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   coordinates:

@@ -31,8 +31,13 @@ namespace Battle.Boards {
             _playerBoard.Attack(x, y);
         }
         
-        public void InitEnemyBoard() {
+        public void InitBoards() {
+            // If we don't initialize the enemy board here, it will be null when we try to init it
+            _enemyBoard = EnemyBoard.Instance;
+            _playerBoard = PlayerBoard.Instance;
+            
             _enemyBoard.Init();
+            _playerBoard.Init();
         }
     }
 }

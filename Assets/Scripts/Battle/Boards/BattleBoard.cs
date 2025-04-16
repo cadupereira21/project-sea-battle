@@ -3,23 +3,30 @@ using UnityEngine;
 
 namespace Battle.Boards {
     public abstract class BattleBoard : MonoBehaviour {
+        
+        [SerializeField]
+        [Tooltip("The enemy board interface that will be used to display the enemy board")]
+        protected BoardInterface boardInterface;
 
         private readonly TileType[,] _board = new TileType[10, 10];
 
-        public AttackResult Attack(int x, int y) {
+        public void Attack(int x, int y) {
             TileType tileType = _board[x,y];
 
             switch (tileType) {
                 case TileType.WATER:
                     Debug.Log("[BattleBoard] Attack missed!");
-                    return AttackResult.MISS;
+                    SetInterfaceTile(x, y, TileType.WATER);
+                    break;
                 case TileType.WARSHIP_ALIVE:
                     Debug.Log("[BattleBoard] Warship hit!");
-                    SetTile(x, y, TileType.WARSHIP_DESTROYED);
-                    return AttackResult.HIT;
+                    SetBoardTile(x, y, TileType.WARSHIP_DESTROYED);
+                    SetInterfaceTile(x, y, TileType.WARSHIP_DESTROYED);
+                    break;
                 case TileType.WARSHIP_DESTROYED:
                     Debug.Log("[BattleBoard] Warship already destroyed!");
-                    return AttackResult.ALREADY_DESTROYED;
+                    SetInterfaceTile(x, y, TileType.WARSHIP_DESTROYED);
+                    break;
                 case TileType.UNKNOWN:
                     throw new ArgumentOutOfRangeException();
                 default:
@@ -27,8 +34,12 @@ namespace Battle.Boards {
             }
         }
 
-        protected void SetTile(int x, int y, TileType value) {
+        protected void SetBoardTile(int x, int y, TileType value) {
             _board[x, y] = value;
+        }
+
+        private void SetInterfaceTile(int x, int y, TileType value) {
+            boardInterface.SetInterfaceTile(x, y, value);
         }
 
         protected void InitWater() {
