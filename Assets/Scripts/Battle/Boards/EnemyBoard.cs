@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Battle.Boards {
     public class EnemyBoard : BattleBoard {
@@ -18,7 +17,7 @@ namespace Battle.Boards {
         public void Init() {
             this.InitWater();
             InitWarships();
-            this.PrintBoard();
+            //this.PrintBoard();
         }
         
         private void InitWarships() {
@@ -51,9 +50,7 @@ namespace Battle.Boards {
                 new (9, 9)
             };
             
-            foreach (Tuple<int, int> coordinate in warshipCoordinates) {
-                this.SetBoardTile(coordinate.Item1, coordinate.Item2, TileType.WARSHIP_ALIVE);
-            }
+            base.InitWarships(warshipCoordinates);
         }
     }
 }

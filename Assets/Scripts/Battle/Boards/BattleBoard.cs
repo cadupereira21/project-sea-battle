@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Battle.Boards {
@@ -48,6 +49,12 @@ namespace Battle.Boards {
                 for (int j = 0; j < 10; j++) {
                     _board[i, j] = TileType.WATER;
                 }
+            }
+        }
+
+        protected void InitWarships(List<Tuple<int, int>> warshipCoordinates) {
+            foreach (Tuple<int, int> coordinate in warshipCoordinates) {
+                SetBoardTile(coordinate.Item1, coordinate.Item2, TileType.WARSHIP_ALIVE);
             }
         }
 
