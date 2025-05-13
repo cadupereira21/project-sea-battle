@@ -40,7 +40,7 @@ namespace Camera {
         }
         
         private void ZoomCamera(float zoomAmount) {
-            _camera.orthographicSize = Mathf.Clamp(_camera.orthographicSize - zoomAmount, minZoom, maxZoom);
+            _camera.fieldOfView = Mathf.Clamp(_camera.fieldOfView - zoomAmount, minZoom, maxZoom);
         }
     }
 }

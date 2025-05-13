@@ -2,54 +2,48 @@ using UnityEngine;
 
 namespace Camera {
     public class CameraMovementController : MonoBehaviour {
+
+        [SerializeField] private UnityEngine.Camera sceneCamera;
+
+        private Plane _plane;
         
-        private UnityEngine.Camera _camera;
+        private Vector3 _lastWorldPosition;
 
-        private Vector3 _lastClickPosition;
-
-        private bool _canMove = true;
-    
-        private void Awake() {  
-            _camera = this.GetComponent<UnityEngine.Camera>();
+        private void Start() {
+            _plane = new Plane(inNormal: Vector3.up, inPoint: Vector3.zero);
         }
 
         private void Update() {
-            GetInputForMobile();
+            Touch[] touches = Input.touches;
+
+            if (touches.Length != 1) return;
+            
+            
+            HandleCameraDrag(touches[0]);
         }
 
-        private void GetInputForMobile() {
-            switch (Input.touchCount) {
-                case <= 0:
-                    return;
-                default:
-                    HandleScreenDrag();
-                    break;
+        private void HandleCameraDrag(Touch touch) {
+            Ray ray = sceneCamera.ScreenPointToRay(touch.position);
+
+            if (!_plane.Raycast(ray: ray, enter: out float enter)) return;
+            
+            Vector3 worldPosition = ray.GetPoint(enter);
+
+            if (touch.phase == TouchPhase.Began) {
+                _lastWorldPosition = worldPosition; // record first
+            }
+            else {
+                MoveCamera(worldPosition);
             }
         }
 
-        private void HandleScreenDrag() {
-            Touch touch = Input.touches[0];
-        
-            switch (touch.phase) {
-                case TouchPhase.Began:
-                    //_canMove == isClickOverUi();
-                    _lastClickPosition = touch.position;
-                    break;
-                case TouchPhase.Moved when _canMove:
-                    MoveCamera(touch.position);
+        private void MoveCamera(Vector3 worldPosition) {
+            Vector3 delta = worldPosition - _lastWorldPosition;
                 
-                    _lastClickPosition = touch.position;
-                    break;
-            }
-        }
+            Vector3 position = sceneCamera.transform.position;
+            position -= delta;
 
-        private void MoveCamera(Vector3 actualPosition) {
-            Vector3 actualMouseWorldPosition = _camera.ScreenToWorldPoint(actualPosition);
-            Vector3 lastMouseWorldPosition = _camera.ScreenToWorldPoint(_lastClickPosition);
-        
-            Vector3 delta = lastMouseWorldPosition - actualMouseWorldPosition;
-        
-            this.transform.position += delta;
+            sceneCamera.transform.position = position;
         }
     }
 }
