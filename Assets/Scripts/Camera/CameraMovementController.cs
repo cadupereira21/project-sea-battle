@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Camera {
     public class CameraMovementController : MonoBehaviour {
@@ -8,6 +9,8 @@ namespace Camera {
         private Plane _plane;
         
         private Vector3 _lastWorldPosition;
+        
+        public static bool IsPointerOverUI() => EventSystem.current.IsPointerOverGameObject();
 
         private void Start() {
             _plane = new Plane(inNormal: Vector3.up, inPoint: Vector3.zero);
@@ -16,8 +19,7 @@ namespace Camera {
         private void Update() {
             Touch[] touches = Input.touches;
 
-            if (touches.Length != 1) return;
-            
+            if (touches.Length != 1 || IsPointerOverUI()) return;
             
             HandleCameraDrag(touches[0]);
         }

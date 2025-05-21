@@ -1,31 +1,128 @@
 ﻿using System;
+using Battle.Warship;
+using Camera;
+using Scriptable_Objects;
 using UnityEngine;
 
 namespace Placement {
+    [RequireComponent(typeof(PlacementInputManager))]
     public class PlacementSystem : MonoBehaviour {
-
+        
+        [Header("Grid")]
         [SerializeField] 
-        private GameObject mouseIndicator;
+        private Grid grid;
 
         [SerializeField] 
         private GameObject cellIndicator;
 
+        [SerializeField] private GameObject gridVisualization;
+            
+        [Header("Warships")]
+        [SerializeField]
+        private WarshipsDatabaseSO warshipsDatabase;
+
         [SerializeField] 
-        private Grid grid;
+        private GameObject warshipsInstanceParent;
         
         private PlacementInputManager _placementInputManager;
+
+        private int _selectedObjectIndex;
+
+        private GameObject _selectedParentObject;
+        
+        private Warship _selectedWarship;
+
+        private static bool IsPointerOverUI => CameraMovementController.IsPointerOverUI();
 
         private void Awake() {
             _placementInputManager = this.GetComponent<PlacementInputManager>();
         }
 
+        private void Start() {
+            StopPlacement();
+        }
+
         private void Update() {
-            if (!Input.GetMouseButtonDown(0)) return;
+            if (!Input.GetMouseButtonDown(0) || IsPointerOverUI || _selectedObjectIndex < 0) return;
             Vector3 mousePosition = _placementInputManager.GetWorldPointClick();
             Vector3Int gridPosition = grid.WorldToCell(mousePosition);
             Vector3 worldPosition = grid.CellToWorld(gridPosition);
-            mouseIndicator.transform.position = mousePosition;
             cellIndicator.transform.position = new Vector3(worldPosition.x, cellIndicator.transform.position.y, worldPosition.z);
+        }
+
+        public void StartPlacement(int id) {
+            Debug.Log($"[PlacementSystem] Starting placement of warship with id '{id}'");
+            StopPlacement();
+            _selectedObjectIndex = warshipsDatabase.warshipsData.FindIndex(data => data.id == id);
+
+            if (_selectedObjectIndex < 0) {
+                Debug.LogError($"[PlacementSystem] The id '{id}' does not exist in the WarshipsDatabase");
+                return;
+            }
+            
+            gridVisualization.SetActive(true);
+            cellIndicator.SetActive(true);
+            _placementInputManager.OnClick.AddListener(PositionWarship);
+            _placementInputManager.OnExit.AddListener(StopPlacement);
+        }
+        
+        private void PositionWarship() {
+            if (IsPointerOverUI) return;
+
+            if (_selectedParentObject == null) {
+                GameObject warshipInstance = Instantiate(warshipsDatabase.warshipsData[_selectedObjectIndex].prefab,
+                                                         warshipsInstanceParent.transform);   
+                _selectedParentObject = warshipInstance;
+                _selectedWarship = warshipInstance.GetComponentInChildren<Warship>();
+            }
+            
+            Vector3 mousePosition = _placementInputManager.GetWorldPointClick();
+            Vector3Int gridPosition = grid.WorldToCell(mousePosition);
+            Vector3 worldPosition = grid.CellToWorld(gridPosition);
+
+            _selectedParentObject.transform.position =
+                new Vector3(worldPosition.x, this.transform.position.y, worldPosition.z);
+            _selectedWarship.SetBowCoordinates(gridPosition);
+        }
+        
+        public void PlaceWarship() {
+            if (_selectedParentObject == null) {
+                Debug.LogError($"[PlacementSystem] No warship selected to place");
+                return;
+            }
+            
+            Debug.Log($"[PlacementSystem] Placing warship with id '{_selectedObjectIndex}' at position {_selectedWarship.BowCoordinates}");
+            
+            _selectedObjectIndex = -1;
+            _selectedParentObject = null;
+
+            gridVisualization.SetActive(false);
+            cellIndicator.SetActive(false);
+            _placementInputManager.OnClick.RemoveListener(PositionWarship);
+            _placementInputManager.OnExit.RemoveListener(StopPlacement);
+        }
+        
+        public void RotateWarship() {
+            if (_selectedParentObject == null) {
+                Debug.LogError($"[PlacementSystem] No warship selected to rotate");
+                return;
+            }
+            
+            _selectedWarship.RotateShip();
+        }
+
+        public void StopPlacement() {
+            Debug.Log($"[PlacementSystem] Stopping placement of warship with id '{_selectedObjectIndex}'");
+            _selectedObjectIndex = -1;
+            if (_selectedParentObject != null) {
+                Destroy(_selectedParentObject);
+                _selectedParentObject = null;
+            }
+            
+            gridVisualization.SetActive(false);
+            cellIndicator.SetActive(false);
+            _placementInputManager.OnClick.RemoveListener(PositionWarship);
+            _placementInputManager.OnExit.RemoveListener(StopPlacement);
         }
     }
 }

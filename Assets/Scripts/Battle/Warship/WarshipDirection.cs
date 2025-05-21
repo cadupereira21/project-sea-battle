@@ -1,8 +1,8 @@
 ﻿namespace Battle.Warship {
     public enum WarshipDirection {
+        WEST,
         NORTH,
-        SOUTH,
         EAST,
-        WEST
+        SOUTH
     }
 }

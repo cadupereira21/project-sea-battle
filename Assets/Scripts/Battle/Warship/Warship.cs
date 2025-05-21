@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using Scriptable_Objects;
 using UnityEngine;
 
 namespace Battle.Warship {
     public class Warship : MonoBehaviour {
         
         [SerializeField]
-        private WarshipData warshipData;
+        private WarshipDataSO warshipDataSo;
         
         [Header("Warship Position")]
         [SerializeField]
         [Tooltip("The coordinate of the front side of the warship")]
-        private Vector2 coordinatesBow;
+        private Vector2Int bowCoordinates;
 
         [SerializeField]
         [Tooltip("The direction where the boat is facing")]
-        private WarshipDirection warshipDirection;
+        private WarshipDirection warshipDirection = WarshipDirection.WEST;
 
         public List<Tuple<int, int>> Coordinates { get; private set; } = new ();
 
@@ -27,17 +28,28 @@ namespace Battle.Warship {
                                       WarshipDirection.WEST.Equals(warshipDirection);
 
         private int _warshipTileSize;
+        
+        public Vector2 BowCoordinates => bowCoordinates;
 
         private void Start() {
-            SetWarshipSize();
-            SetWarshipPositionByWarshipSize();
-            SetWarshipCoordinates();
+            //SetWarshipSize();
+            //SetWarshipPositionByWarshipSize();
+            //SetWarshipCoordinates();
+        }
+
+        public void RotateShip() {
+            // Need to rotate the ship following a defined order
+        }
+
+        public void SetBowCoordinates(Vector3Int coordinates) {
+            Debug.Log($"[Warship] Setting bow coordinates to ({Mathf.Abs(coordinates.x - 4)}, {coordinates.z + 5})");
+            bowCoordinates = new Vector2Int(Mathf.Abs(coordinates.x - 4), coordinates.z + 5);
         }
 
         private void SetWarshipSize() {
             Vector3 scale = this.transform.localScale;
 
-            switch (warshipData.size) {
+            switch (warshipDataSo.size) {
                 case WarshipSize.SMALL:
                     this.transform.localScale = new Vector3(WarshipSizeConstants.SMALL_WARSHIP_SIZE, scale.y, scale.z);
                     _warshipTileSize = 2;
@@ -57,7 +69,7 @@ namespace Battle.Warship {
         }
 
         private void SetWarshipPositionByWarshipSize() {
-            WarshipSize size = warshipData.size;
+            WarshipSize size = warshipDataSo.size;
 
             switch (size) {
                 case WarshipSize.SMALL:
@@ -98,17 +110,17 @@ namespace Battle.Warship {
             }
 
             this.transform.position = new Vector3(
-                x + ((int) coordinatesBow.y * 10),
+                x + ((int) bowCoordinates.y * 10),
                 2,
-                z - ((int) coordinatesBow.x * 10)
+                z - ((int) bowCoordinates.x * 10)
             );
         }
 
         private void SetWarshipCoordinates() {
             int directionModifier = WarshipDirection.WEST.Equals(warshipDirection) || WarshipDirection.NORTH.Equals(warshipDirection) ? 1 : -1;
             for (int i = 0; i < _warshipTileSize; i++) {
-                int x = IsHorizontal ? (int)coordinatesBow.x : (int)coordinatesBow.x + i * directionModifier; 
-                int y = IsHorizontal ? (int)coordinatesBow.y + i * directionModifier : (int)coordinatesBow.y; 
+                int x = IsHorizontal ? (int)bowCoordinates.x : (int)bowCoordinates.x + i * directionModifier; 
+                int y = IsHorizontal ? (int)bowCoordinates.y + i * directionModifier : (int)bowCoordinates.y; 
                 Coordinates.Add(new Tuple<int, int>(x, y));
             }
         }
