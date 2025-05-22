@@ -86,12 +86,12 @@ namespace Placement {
         }
         
         public void PlaceWarship() {
+            _selectedWarship.SetWarshipCoordinatesBasedOnBowCoordinates();
+            
             if (_selectedParentObject == null) {
                 Debug.LogError($"[PlacementSystem] No warship selected to place");
                 return;
             }
-            
-            Debug.Log($"[PlacementSystem] Placing warship with id '{_selectedObjectIndex}' at position {_selectedWarship.BowCoordinates}");
             
             _selectedObjectIndex = -1;
             _selectedParentObject = null;
