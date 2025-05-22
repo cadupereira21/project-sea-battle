@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1040383254195036889}
+  - component: {fileID: 5920193900267216525}
   m_Layer: 0
   m_Name: Commander Ship
   m_TagString: Untagged
@@ -32,6 +33,21 @@ Transform:
   - {fileID: 8681432801179256656}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5920193900267216525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4817484391312541644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: deffda2abd5942458946c2cf7f7fb1b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  warshipDataSo: {fileID: 11400000, guid: 9d5c69a29cdc4ac4aa0d05fb302f9650, type: 2}
+  bowCoordinates: {x: 0, y: 0}
+  warshipDirection: 0
 --- !u!1 &6433866014371945894
 GameObject:
   m_ObjectHideFlags: 0
@@ -44,7 +60,6 @@ GameObject:
   - component: {fileID: 8868480937824942725}
   - component: {fileID: 5881142140671345338}
   - component: {fileID: 7699466045086925983}
-  - component: {fileID: 3509983892482141566}
   m_Layer: 0
   m_Name: Commander Ship
   m_TagString: Untagged
@@ -141,18 +156,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3509983892482141566
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6433866014371945894}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: deffda2abd5942458946c2cf7f7fb1b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  warshipDataSo: {fileID: 0}
-  coordinatesBow: {x: 0, y: 0}
-  warshipDirection: 3

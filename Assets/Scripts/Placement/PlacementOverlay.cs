@@ -26,7 +26,7 @@ namespace Placement {
         private Button rotateButton;
 
         private void Start() {
-            foreach (WarshipDataSO warshipData in warshipsDatabase.warshipsData) {
+            foreach (WarshipDataSo warshipData in warshipsDatabase.warshipsData) {
                 WarshipSelector newInstance = Instantiate(warshipSelectorPrefab, scrollContent.transform);
                 newInstance.Init(warshipData, () => placementSystem.StartPlacement(warshipData.id));
             }

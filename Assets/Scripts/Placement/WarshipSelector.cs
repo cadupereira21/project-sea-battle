@@ -13,9 +13,9 @@ namespace Placement {
         [SerializeField]
         private Button button;
 
-        private WarshipDataSO _warshipDataSo;
+        private WarshipDataSo _warshipDataSo;
         
-        public void Init(WarshipDataSO warshipDataSo, UnityAction onClick) {
+        public void Init(WarshipDataSo warshipDataSo, UnityAction onClick) {
             _warshipDataSo = warshipDataSo;
             warshipNameText.text = _warshipDataSo.name;
             button.onClick.AddListener(onClick);

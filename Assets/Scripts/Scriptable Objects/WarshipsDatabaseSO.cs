@@ -6,7 +6,7 @@ namespace Scriptable_Objects {
     [CreateAssetMenu]
     public class WarshipsDatabaseSO : ScriptableObject {
 
-        public List<WarshipDataSO> warshipsData;
+        public List<WarshipDataSo> warshipsData;
 
     }
 }
