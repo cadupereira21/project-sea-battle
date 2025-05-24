@@ -1,6 +1,7 @@
 ﻿using System;
 using Battle.Warship;
 using Camera;
+using Exception;
 using Scriptable_Objects;
 using UnityEngine;
 
@@ -15,6 +16,9 @@ namespace Placement {
         [SerializeField] 
         private GameObject cellIndicator;
 
+        [SerializeField] 
+        private GameObject errorCellIndicator;
+
         [SerializeField] private GameObject gridVisualization;
             
         [Header("Warships")]
@@ -24,6 +28,10 @@ namespace Placement {
         [SerializeField] 
         private GameObject warshipsInstanceParent;
         
+        [Header("Error Handling")]
+        [SerializeField]
+        private PlacementErrorOverlay placementErrorOverlay;
+        
         private PlacementInputManager _placementInputManager;
 
         private int _selectedObjectIndex;
@@ -32,7 +40,7 @@ namespace Placement {
         
         private Warship _selectedWarship;
 
-        private static bool IsPointerOverUI => CameraMovementController.IsPointerOverUI();
+        private static bool IsPointerOverUI => ScreenMovementController.IsPointerOverUI();
 
         private void Awake() {
             _placementInputManager = this.GetComponent<PlacementInputManager>();
@@ -40,14 +48,6 @@ namespace Placement {
 
         private void Start() {
             StopPlacement();
-        }
-
-        private void Update() {
-            if (!Input.GetMouseButtonDown(0) || IsPointerOverUI || _selectedObjectIndex < 0) return;
-            Vector3 mousePosition = _placementInputManager.GetWorldPointClick();
-            Vector3Int gridPosition = grid.WorldToCell(mousePosition);
-            Vector3 worldPosition = grid.CellToWorld(gridPosition);
-            cellIndicator.transform.position = new Vector3(worldPosition.x, cellIndicator.transform.position.y, worldPosition.z);
         }
 
         public void StartPlacement(int id) {
@@ -79,12 +79,37 @@ namespace Placement {
             Vector3 mousePosition = _placementInputManager.GetWorldPointClick();
             Vector3Int gridPosition = grid.WorldToCell(mousePosition);
             Vector3 worldPosition = grid.CellToWorld(gridPosition);
+            
+            Vector3 newPosition = new (worldPosition.x, this.transform.position.y, worldPosition.z);
 
-            _selectedParentObject.transform.position =
-                new Vector3(worldPosition.x, this.transform.position.y, worldPosition.z);
-            _selectedWarship.SetBowCoordinates(gridPosition);
+            try {
+                _selectedWarship.CheckNewWarshipPosition(gridPosition);
+                errorCellIndicator.SetActive(false);
+                cellIndicator.transform.position =
+                    new Vector3(worldPosition.x, cellIndicator.transform.position.y, worldPosition.z);
+                _selectedParentObject.transform.position = newPosition;
+                _selectedWarship.SetBowCoordinates(gridPosition);
+            } catch (UserException exception) {
+                errorCellIndicator.SetActive(true);
+                errorCellIndicator.transform.position =
+                    new Vector3(worldPosition.x, errorCellIndicator.transform.position.y, worldPosition.z);
+                placementErrorOverlay.ShowError(exception);
+            }
         }
         
+        public void RotateWarship() {
+            if (_selectedParentObject == null) {
+                Debug.LogError($"[PlacementSystem] No warship selected to rotate");
+                return;
+            }
+
+            try {
+                _selectedWarship.RotateShip();
+            } catch (UserException exception) {
+                placementErrorOverlay.ShowError(exception);
+            }
+        }
+
         public void PlaceWarship() {
             _selectedWarship.SetWarshipCoordinatesBasedOnBowCoordinates();
             GridCellsManager.AddOccupiedCells(_selectedWarship.Coordinates);
@@ -97,19 +122,7 @@ namespace Placement {
             _selectedObjectIndex = -1;
             _selectedParentObject = null;
 
-            gridVisualization.SetActive(false);
-            cellIndicator.SetActive(false);
-            _placementInputManager.OnClick.RemoveListener(PositionWarship);
-            _placementInputManager.OnExit.RemoveListener(StopPlacement);
-        }
-        
-        public void RotateWarship() {
-            if (_selectedParentObject == null) {
-                Debug.LogError($"[PlacementSystem] No warship selected to rotate");
-                return;
-            }
-            
-            _selectedWarship.RotateShip();
+            StopPlacement();
         }
 
         public void StopPlacement() {
@@ -122,6 +135,7 @@ namespace Placement {
             }
             
             gridVisualization.SetActive(false);
+            errorCellIndicator.SetActive(false);
             cellIndicator.SetActive(false);
             _placementInputManager.OnClick.RemoveListener(PositionWarship);
             _placementInputManager.OnExit.RemoveListener(StopPlacement);

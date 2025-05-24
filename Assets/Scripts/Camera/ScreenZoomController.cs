@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 namespace Camera {
-    public class CameraZoomController : MonoBehaviour {
+    public class ScreenZoomController : MonoBehaviour {
         
         [SerializeField]
         private float maxZoom;

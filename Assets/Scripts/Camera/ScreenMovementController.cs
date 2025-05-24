@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Camera {
-    public class CameraMovementController : MonoBehaviour {
+    public class ScreenMovementController : MonoBehaviour {
 
         [SerializeField] private UnityEngine.Camera sceneCamera;
 

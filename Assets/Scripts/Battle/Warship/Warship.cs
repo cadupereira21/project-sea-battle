@@ -16,12 +16,10 @@ namespace Battle.Warship {
         
         [Header("Warship Position")]
         [SerializeField]
-        [Tooltip("The coordinate of the front side of the warship")]
-        private Vector2Int bowCoordinates;
-
-        [SerializeField]
         [Tooltip("The direction where the boat is facing")]
         private WarshipDirection warshipDirection = WarshipDirection.WEST;
+
+        private Tuple<int, int> _bowCoordinates;
 
         public List<Tuple<int, int>> Coordinates { get; private set; } = new ();
 
@@ -43,13 +41,14 @@ namespace Battle.Warship {
             SetChildPositionByDirection(newDirection);
             SetWarshipCoordinatesBasedOnBowCoordinates(newDirection);
 
-            if (CanBePlaced()) {
+            try {
+                ValidateCoordinates(Coordinates);
                 UpdateDirection(newDirection);
-            } else {
+            } catch (UserException) {
                 RotateChild(warshipDirection);
                 SetChildPositionByDirection(warshipDirection);
                 SetWarshipCoordinatesBasedOnBowCoordinates();
-                throw new ObjectOverlappingException();
+                throw;
             }
         }
 
@@ -95,25 +94,32 @@ namespace Battle.Warship {
         }
 
         public void SetBowCoordinates(Vector3Int coordinates) {
-            bowCoordinates = new Vector2Int(Mathf.Abs(coordinates.x - 4), coordinates.z + 5);
+            _bowCoordinates = GetBowCoordinates(coordinates);
+        }
+        
+        private static Tuple<int, int> GetBowCoordinates(Vector3Int coordinates) {
+            return new Tuple<int, int>(Mathf.Abs(coordinates.x - 4), coordinates.z + 5);
         }
 
         public void SetWarshipCoordinatesBasedOnBowCoordinates(WarshipDirection? newWarshipDirection = null) {
-            WarshipDirection direction = newWarshipDirection ?? warshipDirection;
             Coordinates.Clear();
+            Coordinates.AddRange(GetWarshipCoordinatesBasedOnBowCoordinates(_bowCoordinates, newWarshipDirection ?? warshipDirection));
+        }
+
+        private  List<Tuple<int, int>> GetWarshipCoordinatesBasedOnBowCoordinates(Tuple<int, int> bowCoordinates, WarshipDirection direction) {
+            List<Tuple<int, int>> warshipCoordinates = new ();
+
             int directionModifier = WarshipDirection.WEST.Equals(direction) || WarshipDirection.SOUTH.Equals(direction) ? 1 : -1;
             
-            Debug.Log($"[Warship] Setting bow coordinates for direction: {direction} and bow coordinates: ({bowCoordinates.x}, {bowCoordinates.y})");
-            
-            Coordinates.Add(new Tuple<int, int>(bowCoordinates.x, bowCoordinates.y));
-            Debug.Log($"[Warship] Coordinate: ({bowCoordinates.x}, {bowCoordinates.y})");
+            warshipCoordinates.Add(new Tuple<int, int>(bowCoordinates.Item1, bowCoordinates.Item2));
             
             for (int i = 1; i < warshipDataSo.Size; i++) {
-                int x = IsHorizontal(direction) ? bowCoordinates.x : bowCoordinates.x + i * directionModifier; 
-                int y = IsHorizontal(direction) ? bowCoordinates.y + i * directionModifier : bowCoordinates.y; 
-                Coordinates.Add(new Tuple<int, int>(x, y));
-                Debug.Log($"[Warship] Coordinate: ({x}, {y})");
+                int x = IsHorizontal(direction) ? bowCoordinates.Item1 : bowCoordinates.Item1 + i * directionModifier; 
+                int y = IsHorizontal(direction) ? bowCoordinates.Item2 + i * directionModifier : bowCoordinates.Item2; 
+                warshipCoordinates.Add(new Tuple<int, int>(x, y));
             }
+
+            return warshipCoordinates;
         }
         
         private bool IsHorizontal(WarshipDirection? direction = null) {
@@ -126,8 +132,22 @@ namespace Battle.Warship {
             }
         }
 
-        private bool CanBePlaced() {
-            return !Coordinates.Any(GridCellsManager.IsCellOccupied);
+        private static void ValidateCoordinates(List<Tuple<int, int>> coordinates) {
+            if (coordinates.Any(GridCellsManager.IsCellOccupied)) {
+                throw new PlacementObjectOverlapException();
+            }
+
+            if (!coordinates.All(coordinate => coordinate.Item1 is >= 0 and < 10 && coordinate.Item2 is >= 0 and < 10)) {
+                throw new PlacementObjectOutOfBoundsException();
+            }
+        }
+
+        public void CheckNewWarshipPosition(Vector3Int gridPosition) {
+            Tuple<int, int> newBowCoordinates = GetBowCoordinates(gridPosition);
+            
+            List<Tuple<int, int>> newWarshipCoordinates = GetWarshipCoordinatesBasedOnBowCoordinates(newBowCoordinates, warshipDirection);
+
+            ValidateCoordinates(newWarshipCoordinates);
         }
     }
 }
