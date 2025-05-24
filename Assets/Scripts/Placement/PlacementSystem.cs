@@ -87,6 +87,7 @@ namespace Placement {
         
         public void PlaceWarship() {
             _selectedWarship.SetWarshipCoordinatesBasedOnBowCoordinates();
+            GridCellsManager.AddOccupiedCells(_selectedWarship.Coordinates);
             
             if (_selectedParentObject == null) {
                 Debug.LogError($"[PlacementSystem] No warship selected to place");
@@ -115,6 +116,7 @@ namespace Placement {
             Debug.Log($"[PlacementSystem] Stopping placement of warship with id '{_selectedObjectIndex}'");
             _selectedObjectIndex = -1;
             if (_selectedParentObject != null) {
+                GridCellsManager.RemoveOccupiedCells(_selectedWarship.Coordinates);
                 Destroy(_selectedParentObject);
                 _selectedParentObject = null;
             }

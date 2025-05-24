@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Exception;
+using Placement;
 using Scriptable_Objects;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -40,12 +41,14 @@ namespace Battle.Warship {
             WarshipDirection newDirection = GetNewWarshipDirection();
             RotateChild(newDirection);
             SetChildPositionByDirection(newDirection);
-            
-            if (!IsOverlapping())
+            SetWarshipCoordinatesBasedOnBowCoordinates(newDirection);
+
+            if (CanBePlaced()) {
                 UpdateDirection(newDirection);
-            else {
+            } else {
                 RotateChild(warshipDirection);
                 SetChildPositionByDirection(warshipDirection);
+                SetWarshipCoordinatesBasedOnBowCoordinates();
                 throw new ObjectOverlappingException();
             }
         }
@@ -95,16 +98,19 @@ namespace Battle.Warship {
             bowCoordinates = new Vector2Int(Mathf.Abs(coordinates.x - 4), coordinates.z + 5);
         }
 
-        public void SetWarshipCoordinatesBasedOnBowCoordinates() {
+        public void SetWarshipCoordinatesBasedOnBowCoordinates(WarshipDirection? newWarshipDirection = null) {
+            WarshipDirection direction = newWarshipDirection ?? warshipDirection;
             Coordinates.Clear();
-            int directionModifier = WarshipDirection.WEST.Equals(warshipDirection) || WarshipDirection.SOUTH.Equals(warshipDirection) ? 1 : -1;
+            int directionModifier = WarshipDirection.WEST.Equals(direction) || WarshipDirection.SOUTH.Equals(direction) ? 1 : -1;
+            
+            Debug.Log($"[Warship] Setting bow coordinates for direction: {direction} and bow coordinates: ({bowCoordinates.x}, {bowCoordinates.y})");
             
             Coordinates.Add(new Tuple<int, int>(bowCoordinates.x, bowCoordinates.y));
             Debug.Log($"[Warship] Coordinate: ({bowCoordinates.x}, {bowCoordinates.y})");
             
             for (int i = 1; i < warshipDataSo.Size; i++) {
-                int x = IsHorizontal() ? bowCoordinates.x : bowCoordinates.x + i * directionModifier; 
-                int y = IsHorizontal() ? bowCoordinates.y + i * directionModifier : bowCoordinates.y; 
+                int x = IsHorizontal(direction) ? bowCoordinates.x : bowCoordinates.x + i * directionModifier; 
+                int y = IsHorizontal(direction) ? bowCoordinates.y + i * directionModifier : bowCoordinates.y; 
                 Coordinates.Add(new Tuple<int, int>(x, y));
                 Debug.Log($"[Warship] Coordinate: ({x}, {y})");
             }
@@ -120,9 +126,8 @@ namespace Battle.Warship {
             }
         }
 
-        private bool IsOverlapping() {
-            // check collision with other trigger collider
-            return false;
+        private bool CanBePlaced() {
+            return !Coordinates.Any(GridCellsManager.IsCellOccupied);
         }
     }
 }
