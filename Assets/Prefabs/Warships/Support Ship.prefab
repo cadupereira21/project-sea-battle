@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2434771548527111631}
   - component: {fileID: 2577389061629984017}
   - component: {fileID: 6560538584862701678}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Support Ship
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -102,7 +102,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

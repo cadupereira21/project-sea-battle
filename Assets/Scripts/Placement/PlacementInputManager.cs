@@ -41,7 +41,7 @@ namespace Placement {
             mousePosition.z = sceneCamera.nearClipPlane;
             
             Ray ray = sceneCamera.ScreenPointToRay(mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, 10, placementLayerMask)) {
+            if (Physics.Raycast(ray, out RaycastHit hit, 20, placementLayerMask)) {
                 _lastPosition = hit.point;
             }
 

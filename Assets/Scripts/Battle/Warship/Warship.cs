@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Exception;
 using Scriptable_Objects;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Battle.Warship {
@@ -23,27 +27,35 @@ namespace Battle.Warship {
         private const float POSITION_CONST = 0.5f;
 
         private Transform _childObjectTransform;
-
-        private bool IsHorizontal => WarshipDirection.EAST.Equals(warshipDirection) ||
-                                      WarshipDirection.WEST.Equals(warshipDirection);
         
         private void Awake() {
             _childObjectTransform = this.transform.GetChild(0);
         }
 
         private void Start() {
-            SetChildPositionByDirection();
+            SetChildPositionByDirection(warshipDirection);
         }
 
         public void RotateShip() {
-            UpdateDirection();
-            RotateChild();
-            Coordinates.Clear();
-            SetChildPositionByDirection();
+            WarshipDirection newDirection = GetNewWarshipDirection();
+            RotateChild(newDirection);
+            SetChildPositionByDirection(newDirection);
+            
+            if (!IsOverlapping())
+                UpdateDirection(newDirection);
+            else {
+                RotateChild(warshipDirection);
+                SetChildPositionByDirection(warshipDirection);
+                throw new ObjectOverlappingException();
+            }
         }
 
-        private void UpdateDirection() {
-            warshipDirection = warshipDirection switch {
+        private void UpdateDirection(WarshipDirection newWarshipDirection) {
+            warshipDirection = newWarshipDirection;
+        }
+
+        private WarshipDirection GetNewWarshipDirection() {
+            return warshipDirection switch {
                 WarshipDirection.WEST => WarshipDirection.SOUTH,
                 WarshipDirection.SOUTH => WarshipDirection.EAST,
                 WarshipDirection.EAST => WarshipDirection.NORTH,
@@ -52,31 +64,31 @@ namespace Battle.Warship {
             };
         }
 
-        private void RotateChild() {
-            if (Mathf.Approximately(this.transform.rotation.y, 270)) {
-                _childObjectTransform.transform.Rotate(Vector3.up, -270);
-            } else {
-                _childObjectTransform.transform.Rotate(Vector3.up, 90);
-            }
+        private void RotateChild(WarshipDirection newWarshipDirection) {
+            _childObjectTransform.transform.rotation = Quaternion.Euler(0, IsHorizontal(newWarshipDirection) ? 0 : 90, 0);
         }
 
-        private void SetChildPositionByDirection() {
+        private void SetChildPositionByDirection(WarshipDirection newWarshipDirection) {
+            _childObjectTransform.transform.localPosition = GetChildPositionByDirection(newWarshipDirection);
+        }
+
+        private Vector3 GetChildPositionByDirection(WarshipDirection newWarshipDirection) {
             float x = (float) warshipDataSo.Size/2;
             float z = (float) warshipDataSo.Size/2;
             
-            if (IsHorizontal) {
-                if (warshipDirection.Equals(WarshipDirection.EAST)) {
+            if (IsHorizontal(newWarshipDirection)) {
+                if (newWarshipDirection.Equals(WarshipDirection.EAST)) {
                     x -= Mathf.Ceil(warshipDataSo.Size-1);
                 }
                 z = POSITION_CONST;
             } else {
-                if (warshipDirection.Equals(WarshipDirection.SOUTH)) {
+                if (newWarshipDirection.Equals(WarshipDirection.SOUTH)) {
                     z -= Mathf.Ceil(warshipDataSo.Size-1);
                 }
                 x = POSITION_CONST;
             }
             
-            _childObjectTransform.transform.localPosition = new Vector3(x, _childObjectTransform.transform.position.y, z);
+            return new Vector3(x, _childObjectTransform.transform.position.y, z);
         }
 
         public void SetBowCoordinates(Vector3Int coordinates) {
@@ -91,11 +103,26 @@ namespace Battle.Warship {
             Debug.Log($"[Warship] Coordinate: ({bowCoordinates.x}, {bowCoordinates.y})");
             
             for (int i = 1; i < warshipDataSo.Size; i++) {
-                int x = IsHorizontal ? bowCoordinates.x : bowCoordinates.x + i * directionModifier; 
-                int y = IsHorizontal ? bowCoordinates.y + i * directionModifier : bowCoordinates.y; 
+                int x = IsHorizontal() ? bowCoordinates.x : bowCoordinates.x + i * directionModifier; 
+                int y = IsHorizontal() ? bowCoordinates.y + i * directionModifier : bowCoordinates.y; 
                 Coordinates.Add(new Tuple<int, int>(x, y));
                 Debug.Log($"[Warship] Coordinate: ({x}, {y})");
             }
+        }
+        
+        private bool IsHorizontal(WarshipDirection? direction = null) {
+            if (direction == null) {
+                return WarshipDirection.EAST.Equals(warshipDirection) ||
+                       WarshipDirection.WEST.Equals(warshipDirection);
+            } else {
+                return WarshipDirection.EAST.Equals(direction) ||
+                       WarshipDirection.WEST.Equals(direction);  
+            }
+        }
+
+        private bool IsOverlapping() {
+            // check collision with other trigger collider
+            return false;
         }
     }
 }
