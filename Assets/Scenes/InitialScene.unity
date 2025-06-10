@@ -3535,6 +3535,7 @@ GameObject:
   - component: {fileID: 1888452729}
   - component: {fileID: 1888452728}
   - component: {fileID: 1888452727}
+  - component: {fileID: 1888452730}
   m_Layer: 0
   m_Name: PlacementSystem
   m_TagString: Untagged
@@ -3573,10 +3574,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9db69ba5346d4aaab740938c1b5910db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 1941704307}
-  cellIndicator: {fileID: 141554189}
-  errorCellIndicator: {fileID: 1625672555}
-  gridVisualization: {fileID: 452107646}
   warshipsDatabase: {fileID: 11400000, guid: 7c90c54083733274ebc2f363e326bec2, type: 2}
   warshipsInstanceParent: {fileID: 862409788}
   playerBoard: {fileID: 1273584176}
@@ -3598,6 +3595,22 @@ Transform:
   - {fileID: 1625672554}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1888452730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888452726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0741c25723044558a995e47a62810361, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 1941704307}
+  gridVisualization: {fileID: 452107646}
+  cellIndicator: {fileID: 141554189}
+  errorCellIndicator: {fileID: 1625672555}
 --- !u!1 &1890087297
 GameObject:
   m_ObjectHideFlags: 0

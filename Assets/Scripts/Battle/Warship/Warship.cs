@@ -10,6 +10,9 @@ using UnityEngine;
 
 namespace Battle.Warship {
     public class Warship : MonoBehaviour {
+
+        [SerializeField] 
+        private PlacementGridManager _placementGridManager;
         
         [SerializeField]
         private WarshipDataSo warshipDataSo;
@@ -133,7 +136,7 @@ namespace Battle.Warship {
         }
 
         private static void ValidateCoordinates(List<Tuple<int, int>> coordinates) {
-            if (coordinates.Any(GridCellsManager.IsCellOccupied)) {
+            if (coordinates.Any(PlacementGridManager.IsCellOccupied)) {
                 throw new PlacementObjectOverlapException();
             }
 

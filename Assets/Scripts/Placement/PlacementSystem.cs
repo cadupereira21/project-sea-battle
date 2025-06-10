@@ -8,19 +8,8 @@ using UnityEngine;
 
 namespace Placement {
     [RequireComponent(typeof(PlacementInputManager))]
+    [RequireComponent(typeof(PlacementGridManager))]
     public class PlacementSystem : MonoBehaviour {
-        
-        [Header("Grid")]
-        [SerializeField] 
-        private Grid grid;
-
-        [SerializeField] 
-        private GameObject cellIndicator;
-
-        [SerializeField] 
-        private GameObject errorCellIndicator;
-
-        [SerializeField] private GameObject gridVisualization;
             
         [Header("Warships")]
         [SerializeField]
@@ -38,6 +27,8 @@ namespace Placement {
         private PlacementErrorOverlay placementErrorOverlay;
         
         private PlacementInputManager _placementInputManager;
+        
+        private PlacementGridManager _placementGridManager;
 
         private int _selectedObjectIndex;
 
@@ -49,6 +40,7 @@ namespace Placement {
 
         private void Awake() {
             _placementInputManager = this.GetComponent<PlacementInputManager>();
+            _placementGridManager = this.GetComponent<PlacementGridManager>();
         }
 
         private void Start() {
@@ -65,8 +57,7 @@ namespace Placement {
                 return;
             }
             
-            gridVisualization.SetActive(true);
-            cellIndicator.SetActive(true);
+            _placementGridManager.StartPlacement();
             _placementInputManager.onScreenClick.AddListener(PositionWarship);
         }
         
@@ -81,22 +72,18 @@ namespace Placement {
             }
             
             Vector3 mousePosition = _placementInputManager.GetWorldPointClick();
-            Vector3Int gridPosition = grid.WorldToCell(mousePosition);
-            Vector3 worldPosition = grid.CellToWorld(gridPosition);
+            Vector3Int gridPosition = _placementGridManager.WorldToCell(mousePosition);
+            Vector3 worldPosition = _placementGridManager.CellToWorld(gridPosition);
             
             Vector3 newPosition = new (worldPosition.x, this.transform.position.y, worldPosition.z);
 
             try {
                 _selectedWarship.CheckNewWarshipPosition(gridPosition);
-                errorCellIndicator.SetActive(false);
-                cellIndicator.transform.position =
-                    new Vector3(worldPosition.x, cellIndicator.transform.position.y, worldPosition.z);
+                _placementGridManager.SetCellIndicatorPosition(worldPosition);
                 _selectedParentObject.transform.position = newPosition;
                 _selectedWarship.SetBowCoordinates(gridPosition);
             } catch (UserException exception) {
-                errorCellIndicator.SetActive(true);
-                errorCellIndicator.transform.position =
-                    new Vector3(worldPosition.x, errorCellIndicator.transform.position.y, worldPosition.z);
+                _placementGridManager.SetErrorCellIndicatorPosition(worldPosition);
                 placementErrorOverlay.ShowError(exception);
             }
         }
@@ -116,7 +103,7 @@ namespace Placement {
 
         public void PlaceWarship() {
             _selectedWarship.SetWarshipCoordinatesBasedOnBowCoordinates();
-            GridCellsManager.AddOccupiedCells(_selectedWarship.Coordinates);
+            _placementGridManager.AddOccupiedCells(_selectedWarship.Coordinates);
             playerBoard.AddWarship(_selectedWarship);
             
             if (_selectedParentObject == null) {
@@ -134,14 +121,12 @@ namespace Placement {
             Debug.Log($"[PlacementSystem] Stopping placement of warship with id '{_selectedObjectIndex}'");
             _selectedObjectIndex = -1;
             if (_selectedParentObject != null) {
-                GridCellsManager.RemoveOccupiedCells(_selectedWarship.Coordinates);
+                _placementGridManager.RemoveOccupiedCells(_selectedWarship.Coordinates);
                 Destroy(_selectedParentObject);
                 _selectedParentObject = null;
             }
             
-            gridVisualization.SetActive(false);
-            errorCellIndicator.SetActive(false);
-            cellIndicator.SetActive(false);
+            _placementGridManager.StopPlacement();
             _placementInputManager.onScreenClick.RemoveListener(PositionWarship);
         }
     }
