@@ -20,7 +20,7 @@ namespace Battle.Warship {
         private WarshipDirection warshipDirection = WarshipDirection.WEST;
 
         private Tuple<int, int> _bowCoordinates;
-
+        
         public List<Tuple<int, int>> Coordinates { get; private set; } = new ();
 
         private const float POSITION_CONST = 0.5f;
@@ -98,7 +98,7 @@ namespace Battle.Warship {
         }
         
         private static Tuple<int, int> GetBowCoordinates(Vector3Int coordinates) {
-            return new Tuple<int, int>(Mathf.Abs(coordinates.x - 4), coordinates.z + 5);
+            return new Tuple<int, int>(9 - coordinates.x, coordinates.z);
         }
 
         public void SetWarshipCoordinatesBasedOnBowCoordinates(WarshipDirection? newWarshipDirection = null) {

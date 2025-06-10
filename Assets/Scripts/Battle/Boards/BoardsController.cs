@@ -37,7 +37,6 @@ namespace Battle.Boards {
             _playerBoard = PlayerBoard.Instance;
             
             _enemyBoard.Init();
-            _playerBoard.Init();
         }
     }
 }

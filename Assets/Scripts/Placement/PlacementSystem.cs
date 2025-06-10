@@ -1,4 +1,5 @@
 ﻿using System;
+using Battle.Boards;
 using Battle.Warship;
 using Camera;
 using Exception;
@@ -27,6 +28,10 @@ namespace Placement {
 
         [SerializeField] 
         private GameObject warshipsInstanceParent;
+        
+        [Header("Board")]
+        [SerializeField]
+        private PlayerBoard playerBoard;
         
         [Header("Error Handling")]
         [SerializeField]
@@ -62,8 +67,7 @@ namespace Placement {
             
             gridVisualization.SetActive(true);
             cellIndicator.SetActive(true);
-            _placementInputManager.OnClick.AddListener(PositionWarship);
-            _placementInputManager.OnExit.AddListener(StopPlacement);
+            _placementInputManager.onScreenClick.AddListener(PositionWarship);
         }
         
         private void PositionWarship() {
@@ -97,7 +101,7 @@ namespace Placement {
             }
         }
         
-        public void RotateWarship() {
+        public void RotateWarship(RotateDirection direction) {
             if (_selectedParentObject == null) {
                 Debug.LogError($"[PlacementSystem] No warship selected to rotate");
                 return;
@@ -107,12 +111,13 @@ namespace Placement {
                 _selectedWarship.RotateShip();
             } catch (UserException exception) {
                 placementErrorOverlay.ShowError(exception);
-            }
+            }        
         }
 
         public void PlaceWarship() {
             _selectedWarship.SetWarshipCoordinatesBasedOnBowCoordinates();
             GridCellsManager.AddOccupiedCells(_selectedWarship.Coordinates);
+            playerBoard.AddWarship(_selectedWarship);
             
             if (_selectedParentObject == null) {
                 Debug.LogError($"[PlacementSystem] No warship selected to place");
@@ -137,8 +142,7 @@ namespace Placement {
             gridVisualization.SetActive(false);
             errorCellIndicator.SetActive(false);
             cellIndicator.SetActive(false);
-            _placementInputManager.OnClick.RemoveListener(PositionWarship);
-            _placementInputManager.OnExit.RemoveListener(StopPlacement);
+            _placementInputManager.onScreenClick.RemoveListener(PositionWarship);
         }
     }
 }

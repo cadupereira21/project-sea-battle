@@ -4,15 +4,28 @@ using UnityEngine;
 
 namespace Battle.Boards {
     public abstract class BattleBoard : MonoBehaviour {
+
+        [SerializeField] 
+        private Grid grid;
         
         [SerializeField]
-        [Tooltip("The enemy board interface that will be used to display the enemy board")]
-        protected BoardInterface boardInterface;
+        private BoardCell gridCellPrefab;
+        
+        private readonly BoardCell[,] _gridCells = new BoardCell[10, 10];
 
-        private readonly TileType[,] _board = new TileType[10, 10];
+        protected void InstantiateBoardCells() {
+            for (int l = 0; l < 10; l++) {
+                for (int c = 0; c < 10; c++) {
+                    BoardCell cell = Instantiate(gridCellPrefab, this.transform);
+                    cell.name = $"Cell_{l}_{c}";
+                    cell.transform.position = grid.CellToWorld(new Vector3Int(9 - l, 0, c));
+                    _gridCells[l, c] = cell;
+                }
+            }
+        }
 
         public void Attack(int x, int y) {
-            TileType tileType = _board[x,y];
+            TileType tileType = _gridCells[x,y].TileType;
 
             switch (tileType) {
                 case TileType.WATER:
@@ -35,37 +48,17 @@ namespace Battle.Boards {
             }
         }
 
-        protected void SetBoardTile(int x, int y, TileType value) {
-            _board[x, y] = value;
+        private void SetBoardTile(int x, int y, TileType value) {
+            _gridCells[x, y].TileType = value;
         }
 
         private void SetInterfaceTile(int x, int y, TileType value) {
-            boardInterface.SetInterfaceTile(x, y, value);
+            //boardInterface.SetInterfaceTile(x, y, value);
         }
 
-        protected void InitWater() {
-            // Fill the board with water tiles
-            for (int i = 0; i < 10; i++) {
-                for (int j = 0; j < 10; j++) {
-                    _board[i, j] = TileType.WATER;
-                }
-            }
-        }
-
-        protected void InitWarships(List<Tuple<int, int>> warshipCoordinates) {
+        protected void SetBoardTilesForWarships(List<Tuple<int, int>> warshipCoordinates) {
             foreach (Tuple<int, int> coordinate in warshipCoordinates) {
                 SetBoardTile(coordinate.Item1, coordinate.Item2, TileType.WARSHIP_ALIVE);
-            }
-        }
-
-        protected void PrintBoard() {
-            // Print the board in the console
-            for (int i = 0; i < 10; i++) {
-                string line = "";
-                for (int j = 0; j < 10; j++) {
-                    line += (int) _board[i, j] + " ";
-                }
-                Debug.Log(line);
             }
         }
     }

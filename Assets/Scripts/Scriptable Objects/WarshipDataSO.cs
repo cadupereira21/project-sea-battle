@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Battle.Warship;
 using UnityEngine;
 
@@ -12,6 +13,8 @@ namespace Scriptable_Objects {
         public string name;
 
         public WarshipSize sizeEnum;
+
+        private readonly Tuple<int, int>[] _coordinates;
 
         public int Size {
             get {

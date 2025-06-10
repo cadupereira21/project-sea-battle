@@ -13,26 +13,15 @@ namespace Placement {
         [SerializeField]
         private LayerMask placementLayerMask;
         
-        [SerializeField]
-        private Button exitButton;
-        
         private Vector3 _lastPosition;
 
         private float _timeSinceClick;
         
-        public UnityEvent OnClick = new ();
-
-        public UnityEvent OnExit = new ();
-
-        private void Awake() {
-            exitButton.onClick.AddListener(() => {
-                OnExit?.Invoke();
-            });
-        }
+        public UnityEvent onScreenClick = new ();
 
         private void Update() {
             if (Input.GetMouseButtonDown(0)) {
-                OnClick?.Invoke();
+                onScreenClick?.Invoke();
             }
         }
         

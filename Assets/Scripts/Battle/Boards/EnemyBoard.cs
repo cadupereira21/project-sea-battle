@@ -15,7 +15,7 @@ namespace Battle.Boards {
         }
 
         public void Init() {
-            this.InitWater();
+            //this.InitWater();
             InitWarships();
             //this.PrintBoard();
         }
@@ -50,7 +50,7 @@ namespace Battle.Boards {
                 new (9, 9)
             };
             
-            base.InitWarships(warshipCoordinates);
+            base.SetBoardTilesForWarships(warshipCoordinates);
         }
     }
 }

@@ -17,17 +17,19 @@ namespace Battle.Boards {
             } else {
                 Destroy(this.gameObject);
             }
+            
+            DontDestroyOnLoad(this);
+            
+            this.InstantiateBoardCells();
         }
 
-        public void Init() {
-            this.InitWater();
-            InitWarships();
-            //this.PrintBoard();
-        }
+        public void AddWarship(Warship.Warship warship) {
+            if (warship == null) {
+                throw new ArgumentNullException(nameof(warship), "Warship cannot be null");
+            }
 
-        private void InitWarships() {
-            List<Tuple<int, int>> allCoordinates = warshipFleet.GetAllWarshipCoordinates();
-            base.InitWarships(allCoordinates);
+            warshipFleet.AddWarship(warship);
+            this.SetBoardTilesForWarships(warship.Coordinates);
         }
     }
 }

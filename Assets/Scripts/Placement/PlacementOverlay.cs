@@ -8,22 +8,29 @@ namespace Placement {
         
         [SerializeField]
         private PlacementSystem placementSystem;
-
-        [SerializeField] 
-        private GameObject scrollContent;
         
         [SerializeField]
         private WarshipSelector warshipSelectorPrefab;
-        
+
         [SerializeField]
         private WarshipsDatabaseSO warshipsDatabase;
+        
+        [Header("Warship selectors location")]
+        [SerializeField] 
+        private GameObject scrollContent;
 
         [Header("Control Buttons")] 
         [SerializeField]
         private Button placeButton;
 
         [SerializeField] 
-        private Button rotateButton;
+        private Button rotateLeftButton;
+
+        [SerializeField] 
+        private Button rotateRightButton;
+
+        [SerializeField] 
+        private Button cancelButton;
 
         private void Start() {
             foreach (WarshipDataSo warshipData in warshipsDatabase.warshipsData) {
@@ -35,8 +42,16 @@ namespace Placement {
                 placementSystem.PlaceWarship();
             });
             
-            rotateButton.onClick.AddListener(() => {
-                placementSystem.RotateWarship();
+            rotateLeftButton.onClick.AddListener(() => {
+                placementSystem.RotateWarship(RotateDirection.LEFT);
+            });
+            
+            rotateRightButton.onClick.AddListener(() => {
+                placementSystem.RotateWarship(RotateDirection.RIGHT);
+            });
+            
+            cancelButton.onClick.AddListener(() => {
+                placementSystem.StopPlacement();
             });
         }
 
